@@ -27,6 +27,8 @@ You are a senior product designer shipping a real product, not a developer wirin
 3. **A design system already exists** (`design.md` + tokens in CSS) → design the new page WITHIN that system, at the bar above: a full professional surface, consistent with what is already shipped. Route: `ui/existing.md`.
 4. **Nothing provided** → establish the design system first (the `frontend-design` skill when available, else derive it from the rules in `ui/generate.md` B2 and verify its contrast), record it in `design.md` (character + mandate + pointers) with the tokens written to CSS, then build to the bar above, maximalist and complete. Route: `ui/generate.md`.
 
+5. **A scroll experience page** (the spec names `scroll-craft` as the design source, or asks for scrollytelling, scroll scrubbed video, an "Apple style" page, a page that should feel like an experience) → hand the page to the sibling `scroll-craft` skill and mount what it builds. Route: `ui/scroll-craft.md`. Whole marketing or brand pages on the web only; never components, app screens, or native UI.
+
 Cases 3 and 4 get the full chat app treatment (bold, complete, product level); case 2 gets faithful fidelity; case 1 gets Figma fidelity. Follow the source the spec recorded.
 
 All paths converge on: component or screen → detect the platform and its systems → token sync → the implementation phases.
@@ -49,9 +51,10 @@ Route on what the spec recorded, using the *Design source* table above:
 - Figma or another design MCP → `ui/mcp.md`.
 - A screenshot or a pasted image → `ui/image.md`.
 - An existing design system, or "extract from existing UI" → **Step 0.1**.
+- `scroll-craft`, or a scroll experience page → `ui/scroll-craft.md` (it hands off, then mounts the build; skip the phases in `ui/implementation.md` except the report).
 - A described direction, a brand or site URL, or nothing at all → `ui/generate.md` (B1 finds the direction, B2 derives and verifies the tokens into CSS and the character into `design.md`), then implement.
 
-No spec governs this UI, or the spec is silent on the design system → fall through to the detection in Steps 0.1 to 0.3. If detection settles nothing, ask *"How should I get the design for this?"* with options **From Figma (its MCP)** · **From a screenshot / images** · **From the existing `design.md` / current UI** · **No design, suggest a direction** (the picker adds Other), then proceed by their pick.
+No spec governs this UI, or the spec is silent on the design system → fall through to the detection in Steps 0.1 to 0.3. If detection settles nothing, ask *"How should I get the design for this?"* with options **From Figma (its MCP)** · **From a screenshot / images** · **From the existing `design.md` / current UI** · **No design, suggest a direction** · **A scroll experience page (`scroll-craft`)** (the picker adds Other), then proceed by their pick.
 
 ## Step 0.1: Check for existing design.md
 
@@ -129,6 +132,7 @@ Based on the checks above, read exactly one source file:
 - `ui/image.md` when a screenshot or image is the source.
 - `ui/existing.md` when an existing `design.md` or current UI is the source.
 - `ui/generate.md` when there is no source: it finds a direction, then derives and verifies the system.
+- `ui/scroll-craft.md` when the page is a scroll experience: it hands off to `scroll-craft`, then mounts the result.
 
 After the selected source has resolved tokens, assets, and design direction, read `ui/implementation.md` and follow it through the implementation phases and report. Do not read the other source files unless the source changes.
 
@@ -136,5 +140,5 @@ After the selected source has resolved tokens, assets, and design direction, rea
 
 - Accessibility checklist: `checklist.md`
 - Project design system: `./design.md` (art direction and the build mandate; token values live in the platform styling/theme system)
-- UI source routes: `ui/mcp.md`, `ui/image.md`, `ui/existing.md`, `ui/generate.md`
+- UI source routes: `ui/mcp.md`, `ui/image.md`, `ui/existing.md`, `ui/generate.md`, `ui/scroll-craft.md`
 - UI implementation phases and report: `ui/implementation.md`

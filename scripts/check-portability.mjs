@@ -202,6 +202,11 @@ function proseOnly(text) {
 const PARSED_LITERALS = new Set([
   'in-progress', 'gap-fill', 'whole-repo', 'Follow-up', 'follow-up', 'pre-flight', 'Pre-flight',
 ]);
+// Vendored third party skills keep their author's prose and size. They still must
+// declare allowed-tools (rule 1), name Agent not Task (rule 8), and ship the Codex
+// adapter (rule 7); the house style and budget rules stop at the folder boundary.
+const VENDORED = ['scroll-craft/'];
+
 const isExemptTerm = (w) => /^[A-Z0-9-]+$/.test(w) || PARSED_LITERALS.has(w);
 
 function check(path) {
@@ -227,6 +232,8 @@ function check(path) {
       violations.push(`${rel}: allowed-tools declares \`Task\` — the subagent tool is now \`Agent\` (Task is a legacy alias)`);
     }
   }
+
+  if (VENDORED.some((v) => rel.startsWith(v))) return;
 
   if (isSkillMd) {
     const skill = rel.split('/')[0];

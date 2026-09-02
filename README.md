@@ -25,6 +25,7 @@ Run `/debug` anytime something breaks. Run a bare `/scope` anytime to see where 
 | `document` | Writes the PR text, changelog, release note, or postmortem from the real diff. |
 | `sync` | Keeps AGENTS.md, the scope, and spec statuses current after a change. |
 | `debug` | Finds and fixes the root cause of a bug, then hands a regression test to `/test`. |
+| `scroll-craft` | Builds a premium scroll driven landing page (by [Nate Herk](https://github.com/nateherkai/scroll-craft), MIT, vendored). `/develop` hands a scroll experience page to it and mounts the result; it can also run on its own. Needs Node 18, a full ffmpeg, and `playwright-core` (see its `SKILL.md`). |
 
 Hardening (systems level failure mode analysis) is temporarily removed and will return as a system design specialization.
 
@@ -105,6 +106,9 @@ When: after building a feature or fixing a bug. Monorepo: resolves the framework
 
 **document**: Writes the human facing prose (PR, changelog, release note, postmortem) from the real diff.
 When: a finished change needs writing up. Any project type.
+
+**scroll-craft**: Interviews you, picks a page grammar and a signature move, builds real HTML on its scroll engine, and verifies the page by screenshotting its own scroll.
+When: a web marketing, launch, brand, or portfolio page that should feel like an experience. `/architect` records it as the design source and `/develop` invokes it (`ui/scroll-craft.md`); or run `/scroll-craft` directly.
 
 **sync**: Reconciles AGENTS.md, the scope, and spec statuses to what the repo now shows.
 When: the last step around merge. Monorepo: reconciles the right workspace.

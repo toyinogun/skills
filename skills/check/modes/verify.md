@@ -92,7 +92,7 @@ Can't tell how to launch it? Ask the engineer for the start command before proce
 ### Step 3: Run and exercise
 
 Launch the app (prefer a background process so you can interact with it). Use a connected MCP where it makes the check real: a browser automation MCP to drive the UI (navigate, click, type, submit, screenshot); a database MCP to confirm the live schema for a data layer criterion (the migration applied check in Step 4b: proof the column really exists, not an assumption). For heavier interaction, spawn a subagent with the tools to drive the browser/CLI and capture evidence, keeping the main context clean. Per scoped behavior:
-- UI → navigate to the route, interact (click, type, submit), screenshot the result and any error state. Check the rendered output, not just a 200.
+- UI → navigate to the route, interact (click, type, submit), screenshot the result and any error state. Check the rendered output, not just a 200. A page built by `scroll-craft` (its `BRIEF.md` sits beside it) → also run its harness (`scroll-craft/scripts/shoot.mjs` at desktop, mobile, and reduced motion, per its `references/verify.md`) and cite the contact sheet as evidence.
 - API → send the request, capture status + body; verify the shape and key fields.
 - CLI / job → run it, capture stdout/stderr and any output artifact.
 

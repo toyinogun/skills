@@ -9,6 +9,7 @@ Guide paths below (`ui-guide.md`, `logical-guide.md`, `checklist.md`) are relati
 | Signals | Track |
 |---|---|
 | "page", "component", "screen", "layout", "ui"; a screenshot is attached; visual work against `design.md` | **UI** → `ui-guide.md` |
+| "scrollytelling", scroll scrubbed video, a page that should feel like an experience, or the spec names `scroll-craft` | **UI** → `ui-guide.md` case 5 (`scroll-craft` handoff) |
 | "api", "endpoint", "service", "functionality", "logic", "data", "job", "webhook", "integration" | **Logical** → `logical-guide.md` |
 | Both present (e.g. "auth": pages + session logic) | **Both**: run each track for its part |
 

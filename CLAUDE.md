@@ -16,4 +16,4 @@ A collection of Claude Code skills encoding a phase based engineering workflow. 
 
 ## Skills
 
-See `skills/` for available skills. (Consumers install them via `npx skills add JavaScript-Mastery-Pro/skills`, which lands them in their agent's skills dir, e.g. `.claude/skills/`.)
+See `skills/` for available skills. `skills/scroll-craft/` is vendored from Nate Herk's scroll-craft (MIT): the frontend sub system `/develop` hands scroll experience pages to. It keeps its author's prose and is exempt from the house style and size rules in `scripts/check-portability.mjs`; edit it only to keep the handoff working. (Consumers install them via `npx skills add JavaScript-Mastery-Pro/skills`, which lands them in their agent's skills dir, e.g. `.claude/skills/`.)
