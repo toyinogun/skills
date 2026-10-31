@@ -3,47 +3,28 @@
 How a new project goes from an empty folder to features that build, verify and review themselves. Set up once, then repeat the feature loop.
 
 ```mermaid
-flowchart TD
-    subgraph SETUP["1. One time setup"]
+flowchart LR
+    subgraph SETUP["1 · Once per project"]
         direction TB
-        S1["Install the skills<br/>npx skills add toyinogun/skills -a claude-code<br/>then restart Claude Code"]
-        S2["/scope<br/>the product idea, features in order,<br/>pick Beta or GA depth"]
-        S3["/architect<br/>decide the stack"]
-        S4["/develop scaffold<br/>create the empty project"]
-        S5["/audit<br/>write AGENTS.md from the real project"]
-        S6["/review-rules init<br/>write REVIEW.md"]
-        S7["/review-loop setup<br/>hooks, skill approvals, AGENTS.md snippet<br/>approve, then restart"]
-        S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7
+        S1["Install skills<br/>+ restart"] --> S2["/scope"] --> S3["/architect<br/>stack"] --> S4["/develop<br/>scaffold"] --> S5["/audit"] --> S6["/review-rules init"] --> S7["/review-loop setup<br/>+ restart"]
     end
 
-    subgraph FEATURE["2. Every feature"]
+    subgraph FEATURE["2 · Each feature"]
         direction TB
-        F1["/architect feature<br/>spec with AC-1, AC-2, ..."]
-        F2["Build it<br/>type /review-loop feature<br/>or just say: build the feature"]
-        F1 --> F2
+        F1["/architect feature<br/>spec with AC-1, AC-2"] --> F2["build the feature<br/>or /review-loop feature"]
     end
 
-    subgraph LOOP["/review-loop runs this on its own"]
+    subgraph LOOP["3 · /review-loop, automatic"]
         direction TB
-        L1["/risk-rate<br/>low, medium or high"]
-        L2["/develop<br/>build or fix this round"]
-        L3["/check verify<br/>run the app, tick each AC<br/>only with evidence"]
-        L4["/check review<br/>different model, follows REVIEW.md"]
-        L5{"Every AC proven and<br/>no new findings?"}
-        L6["status: passed"]
-        L7["Escalate to you<br/>3 round cap, or the same<br/>problem survived 2 fixes"]
-        L1 --> L2 --> L3 --> L4 --> L5
-        L5 -->|"yes"| L6
-        L5 -->|"no, under the cap"| L2
-        L5 -->|"stuck"| L7
+        L1["/risk-rate"] --> L2["/develop"] --> L3["/check verify<br/>tick ACs with evidence"] --> L4["/check review<br/>other model + REVIEW.md"] --> L5{"all ACs proven,<br/>no new findings?"}
+        L5 -->|"no, under cap"| L2
+        L5 -->|"stuck"| L7["escalate to you"]
+        L5 -->|"yes"| L6["passed"]
     end
 
-    subgraph AFTER["3. Finish the feature"]
+    subgraph AFTER["4 · Finish"]
         direction TB
-        A1["/fresh-eyes<br/>customer facing or high risk"]
-        A2["/document<br/>PR text, changelog"]
-        A3["/sync, then /clear"]
-        A1 --> A2 --> A3
+        A1["/fresh-eyes<br/>if customer facing or high risk"] --> A2["/document"] --> A3["/sync, /clear"]
     end
 
     S7 --> F1
@@ -51,12 +32,9 @@ flowchart TD
     L6 --> A1
     A3 -->|"next feature"| F1
 
-    H1(["Hook: the agent calls /develop<br/>on its own: sent to /review-loop"])
-    H2(["Hook: cannot finish while<br/>any AC is unticked"])
-    H1 -.-> F2
-    H2 -.-> L5
-
-    B1(["Something broke?"]) --> B2["/debug<br/>root cause, then a regression test"]
+    H1(["hook: agent's /develop<br/>is sent to /review-loop"]) -.-> F2
+    H2(["hook: can't finish<br/>while an AC is open"]) -.-> L5
+    B1(["bug, anytime"]) --> B2["/debug"]
 ```
 
 ## What you type and what happens on its own
