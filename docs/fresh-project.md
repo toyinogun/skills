@@ -2,39 +2,45 @@
 
 How a new project goes from an empty folder to features that build, verify and review themselves. Set up once, then repeat the feature loop.
 
+## 1. Once per project
+
 ```mermaid
 flowchart LR
-    subgraph SETUP["1 · Once per project"]
-        direction TB
-        S1["Install skills<br/>+ restart"] --> S2["/scope"] --> S3["/architect<br/>stack"] --> S4["/develop<br/>scaffold"] --> S5["/audit"] --> S6["/review-rules init"] --> S7["/review-loop setup<br/>+ restart"]
-    end
+    S1["Install skills<br/>restart"] --> S2["/scope"] --> S3["/architect<br/>the stack"] --> S4["/develop<br/>scaffold"] --> S5["/audit"] --> S6["/review-rules<br/>init"] --> S7["/review-loop<br/>setup<br/>restart"]
+```
 
-    subgraph FEATURE["2 · Each feature"]
-        direction TB
-        F1["/architect feature<br/>spec with AC-1, AC-2"] --> F2["build the feature<br/>or /review-loop feature"]
-    end
+1. `npx skills@latest add toyinogun/skills -a claude-code`, then restart Claude Code.
+2. `/scope` the idea and pick `Beta` or `GA` depth.
+3. `/architect` the stack, then `/develop scaffold` to create the empty project.
+4. `/audit` writes `AGENTS.md`; `/review-rules init` writes `REVIEW.md`.
+5. `/review-loop setup`: approve the settings write, say yes to the `AGENTS.md` snippet, restart.
 
-    subgraph LOOP["3 · /review-loop, automatic"]
-        direction TB
-        L1["/risk-rate"] --> L2["/develop"] --> L3["/check verify<br/>tick ACs with evidence"] --> L4["/check review<br/>other model + REVIEW.md"] --> L5{"all ACs proven,<br/>no new findings?"}
-        L5 -->|"no, under cap"| L2
-        L5 -->|"stuck"| L7["escalate to you"]
-        L5 -->|"yes"| L6["passed"]
-    end
+## 2. Each feature
 
-    subgraph AFTER["4 · Finish"]
-        direction TB
-        A1["/fresh-eyes<br/>if customer facing or high risk"] --> A2["/document"] --> A3["/sync, /clear"]
-    end
-
-    S7 --> F1
-    F2 --> L1
-    L6 --> A1
+```mermaid
+flowchart TD
+    F1["/architect feature<br/>spec with AC-1, AC-2, ..."] --> F2["Ask: build the feature<br/>or type /review-loop feature"]
+    F2 --> F3[["/review-loop<br/>runs on its own, see 3"]]
+    F3 -->|"passed"| A1["/fresh-eyes<br/>customer facing or high risk"]
+    F3 -->|"stuck"| E1["You decide the next step"]
+    A1 --> A2["/document"] --> A3["/sync, then /clear"]
     A3 -->|"next feature"| F1
+    H1(["Hook: if the agent calls /develop,<br/>it is sent to /review-loop"]) -.-> F2
+    B1(["Bug, anytime"]) --> B2["/debug"]
+```
 
-    H1(["hook: agent's /develop<br/>is sent to /review-loop"]) -.-> F2
-    H2(["hook: can't finish<br/>while an AC is open"]) -.-> L5
-    B1(["bug, anytime"]) --> B2["/debug"]
+## 3. Inside `/review-loop`
+
+```mermaid
+flowchart TD
+    L1["/risk-rate<br/>low, medium or high"] --> L2["/develop<br/>build or fix"]
+    L2 --> L3["/check verify<br/>runs the app, ticks each AC<br/>only with evidence"]
+    L3 --> L4["/check review<br/>different model, follows REVIEW.md"]
+    L4 --> L5{"Every AC proven<br/>and no new findings?"}
+    L5 -->|"yes"| P["status: passed"]
+    L5 -->|"no, under 3 rounds"| L2
+    L5 -->|"cap hit, or same<br/>problem after 2 fixes"| X["Escalate to you"]
+    H2(["Hook: the agent cannot finish<br/>while any AC is unticked"]) -.-> L5
 ```
 
 ## What you type and what happens on its own
