@@ -22,6 +22,10 @@ Four skills that sit around the core workflow without changing any of it. They a
 
 Wiring snippets are in each skill. Tests: `npm run test:hooks`.
 
+## Making sure it gets used
+
+Nothing forces a skill to run. It runs when you type it, or when the agent matches your request to its description. To make this the default, paste the snippet from the README section "Making sure the agent uses it" into the project's root `AGENTS.md`. The hooks enforce what a reminder cannot.
+
 ## What it does not change
 
 No existing skill file is edited, so pulling upstream stays conflict free. `/check review` reads `REVIEW.md` only if it finds it through `AGENTS.md`, so `/review-rules init` offers to add one pointer line there.
