@@ -1,0 +1,6 @@
+# OpenAI Codex adapter. This file supplies the interface metadata Codex shows in
+# its agent picker. The skill's actual instructions live in ../SKILL.md.
+interface:
+  display_name: "Review Rules"
+  short_description: "Create REVIEW.md and grow it one approved rule at a time"
+  default_prompt: "Run the review-rules skill: read its SKILL.md, then init REVIEW.md or learn a new rule."

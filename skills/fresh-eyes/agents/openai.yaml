@@ -1,0 +1,6 @@
+# OpenAI Codex adapter. This file supplies the interface metadata Codex shows in
+# its agent picker. The skill's actual instructions live in ../SKILL.md.
+interface:
+  display_name: "Fresh Eyes"
+  short_description: "Have a tester who never saw the code use the live app"
+  default_prompt: "Run the fresh-eyes skill: read its SKILL.md, write the brief, then send a tester with no source access."

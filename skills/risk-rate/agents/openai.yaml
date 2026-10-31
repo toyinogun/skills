@@ -1,0 +1,6 @@
+# OpenAI Codex adapter. This file supplies the interface metadata Codex shows in
+# its agent picker. The skill's actual instructions live in ../SKILL.md.
+interface:
+  display_name: "Risk Rate"
+  short_description: "Rate one change low, medium or high by its worst customer impact"
+  default_prompt: "Run the risk-rate skill: read its SKILL.md, then rate the change by what happens to a customer if it breaks."

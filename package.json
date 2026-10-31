@@ -25,6 +25,7 @@
   "scripts": {
     "check": "node scripts/check-portability.mjs",
     "test": "npm run check",
-    "tokens": "node scripts/analyze-token-usage.mjs"
+    "tokens": "node scripts/analyze-token-usage.mjs",
+    "test:hooks": "node --test tests/*.test.mjs"
   }
 }

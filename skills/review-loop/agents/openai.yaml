@@ -1,0 +1,6 @@
+# OpenAI Codex adapter. This file supplies the interface metadata Codex shows in
+# its agent picker. The skill's actual instructions live in ../SKILL.md.
+interface:
+  display_name: "Review Loop"
+  short_description: "Drive a feature through build, verify and review rounds until proven"
+  default_prompt: "Run the review-loop skill: read its SKILL.md, check the preconditions, then run the rounds for the named feature."
