@@ -53,7 +53,7 @@ Each skill's instructions live in its `SKILL.md`, which is what every client rea
 
 ## Where to start
 
-**New product (greenfield):** `/scope` the idea, then `/architect` the stack, then scaffold the project, then `/audit` to seed AGENTS.md from the real project, then the feature loop. The stack is decided and the project scaffolded before `/audit` runs, so it reads a real project, not an empty one.
+**New product (greenfield):** see the step by step diagram in [docs/fresh-project.md](docs/fresh-project.md). In short: `/scope` the idea, then `/architect` the stack, then scaffold the project, then `/audit` to seed AGENTS.md from the real project, then the feature loop. The stack is decided and the project scaffolded before `/audit` runs, so it reads a real project, not an empty one.
 
 **Existing codebase (brownfield):** `/audit` first so every skill understands your project, then `/scope` the next slice on top of what exists, then the feature loop.
 

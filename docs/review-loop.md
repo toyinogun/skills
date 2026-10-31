@@ -1,5 +1,7 @@
 # The review loop add on
 
+New project? Start with the flow diagram in [fresh-project.md](fresh-project.md).
+
 Four skills that sit around the core workflow without changing any of it. They add the parts the core leaves to you: a loop with caps, a per change risk rating, shared review rules, and a stranger test.
 
 ```
