@@ -10,6 +10,43 @@ idea → /scope → /audit → /architect → /develop → /check verify → /te
 
 Run `/debug` anytime something breaks. Run a bare `/scope` anytime to see where things stand.
 
+## How it flows
+
+**Once per project** (full steps in [docs/fresh-project.md](docs/fresh-project.md)):
+
+```mermaid
+flowchart LR
+    S1["Install skills<br/>restart"] --> S2["/scope"] --> S3["/architect<br/>the stack"] --> S4["/develop<br/>scaffold"] --> S5["/audit"] --> S6["/review-rules<br/>init"] --> S7["/review-loop<br/>setup<br/>restart"]
+```
+
+**Each feature:**
+
+```mermaid
+flowchart TD
+    F1["/architect feature<br/>spec with AC-1, AC-2, ..."] --> F2["Ask: build the feature<br/>or type /review-loop feature"]
+    F2 --> F3[["/review-loop<br/>runs on its own, see 3"]]
+    F3 -->|"passed"| A1["/fresh-eyes<br/>customer facing or high risk"]
+    F3 -->|"stuck"| E1["You decide the next step"]
+    A1 --> A2["/document"] --> A3["/sync, then /clear"]
+    A3 -->|"next feature"| F1
+    H1(["Hook: if the agent calls /develop,<br/>it is sent to /review-loop"]) -.-> F2
+    B1(["Bug, anytime"]) --> B2["/debug"]
+```
+
+**Inside `/review-loop`** (runs on its own):
+
+```mermaid
+flowchart TD
+    L1["/risk-rate<br/>low, medium or high"] --> L2["/develop<br/>build or fix"]
+    L2 --> L3["/check verify<br/>runs the app, ticks each AC<br/>only with evidence"]
+    L3 --> L4["/check review<br/>different model, follows REVIEW.md"]
+    L4 --> L5{"Every AC proven<br/>and no new findings?"}
+    L5 -->|"yes"| P["status: passed"]
+    L5 -->|"no, under 3 rounds"| L2
+    L5 -->|"cap hit, or same<br/>problem after 2 fixes"| X["Escalate to you"]
+    H2(["Hook: the agent cannot finish<br/>while any AC is unticked"]) -.-> L5
+```
+
 For a feature that has to be right, swap the middle of that line for `/review-loop`, which chains `/develop`, `/check verify` and `/check review` in capped rounds. [Jump to the review loop](#the-review-loop-for-features-that-must-be-right).
 
 > 📖 **Want the full picture?** Read the **[Workflow Guide](docs/workflow-guide.md)** — a plain-language walkthrough of every skill, the files that carry the work, who owns what, and one idea followed all the way from scope to shipped.
