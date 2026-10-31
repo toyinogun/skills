@@ -10,6 +10,8 @@ idea → /scope → /audit → /architect → /develop → /check verify → /te
 
 Run `/debug` anytime something breaks. Run a bare `/scope` anytime to see where things stand.
 
+For a feature that has to be right, swap the middle of that line for `/review-loop`, which chains `/develop`, `/check verify` and `/check review` in capped rounds. [Jump to the review loop](#the-review-loop-for-features-that-must-be-right).
+
 > 📖 **Want the full picture?** Read the **[Workflow Guide](docs/workflow-guide.md)** — a plain-language walkthrough of every skill, the files that carry the work, who owns what, and one idea followed all the way from scope to shipped.
 
 ## The skills
@@ -57,6 +59,8 @@ Each skill's instructions live in its `SKILL.md`, which is what every client rea
 
 **Any single change:** run only what it needs. A bug goes straight to `/debug`. A small change can be `/develop` then `/check verify`.
 
+**A feature that must be right** (money, sign in, personal data, migrations, permissions): `/architect`, then `/review-loop <feature>`, then `/fresh-eyes`. See below.
+
 **Monorepo:** everything scopes to the target workspace, which has its own AGENTS.md, scope, stack, and commands.
 
 ### The feature loop
@@ -71,6 +75,37 @@ At the end of `/scope` you also pick a **workflow depth** for the project (overr
 
 The gate is layered, not magic: `/architect` names the source of every value a feature must produce (so gaps surface at design time), `/develop` checks that coverage again before building, and at Beta+ `/architect` recommends running an independent cross-model critic over the spec for decisions it never settled (you decide, and you decide on any gaps it finds). It's a strong, defense-in-depth gate that catches the vast majority — not an absolute guarantee, no prompt can be. Behavioral correctness is caught by the `/check verify` and `/test` layers.
 
+### The review loop (for features that must be right)
+
+```
+/architect → /review-loop <feature> → /fresh-eyes → /document → /sync
+                 │  each round: /develop → /check verify → /check review
+                 ├─ /risk-rate    sets how often review runs
+                 └─ /review-rules keeps REVIEW.md, the rules every review follows
+```
+
+Running `/develop`, `/check verify` and `/check review` by hand works, but it relies on you to notice a failed check, stop at the right time, and not repeat yourself. `/review-loop` does that bookkeeping:
+
+- It copies the spec's `AC-N` lines into `.review-loop/criteria.md` and ticks one only when `/check verify` marks it met with cited evidence.
+- It caps the loop at 3 rounds, asks for a rethink at the cap, and escalates to you if the same kind of finding survives 2 fix rounds.
+- After round 1 it reviews only that round's changes and never counts a repeated finding as new.
+- `/risk-rate` decides review cadence per change: `low` reviews once, `medium` every round, `high` every round plus a second opinion on a different model.
+- An optional Stop hook stops the agent from finishing while criteria are unticked. It releases itself after 3 blocks, so it cannot trap a session.
+
+Where it fits the workflow depths: `Prototype` and `Alpha` rarely need it. At `Beta` and `GA`, use it in place of running the build and check steps by hand, and add `/fresh-eyes` at `GA`.
+
+**Making sure the agent uses it.** Skills run when you type them or when an agent matches your request to a skill description. Nothing forces them. To make them the default for a project, add this to its root `AGENTS.md` (or let `/audit` carry it):
+
+```md
+## Review loop
+- Build any feature that has an approved spec in `docs/specs/` with `/review-loop <feature>`, not by running `/develop` and `/check` by hand.
+- Features that touch money, auth, personal data, migrations or permissions: run `/risk-rate` first and `/fresh-eyes` before merge.
+- When a review misses a bug or raises a false alarm, run `/review-rules learn <what happened>`.
+- Review rules for this repo live in `REVIEW.md`.
+```
+
+`AGENTS.md` loads every session, so the agent follows it without being reminded. The hooks then enforce the parts a reminder cannot: the Stop hook for "done", and the PreToolUse hook for `/fresh-eyes`. Details in [docs/review-loop.md](docs/review-loop.md).
+
 ## What gets written, and where
 
 | Artifact | Path | Owner |
@@ -80,6 +115,9 @@ The gate is layered, not magic: `/architect` names the source of every value a f
 | Context files | AGENTS.md (plus a thin CLAUDE.md pointer) | audit, kept current by sync |
 | Design system | `design.md` (art direction; token values live in CSS) | develop |
 | Review findings | `docs/reviews/` | check |
+| Review rules | `REVIEW.md` | review-rules |
+| Loop state and criteria (ignored by git) | `.review-loop/` | review-loop |
+| Stranger test brief and report (ignored by git) | `.fresh-eyes/` | fresh-eyes |
 | Tests | your test dirs | test |
 | App code | your source tree | develop |
 | Human docs | PR body, CHANGELOG.md, `docs/releases/`, `docs/postmortems/` | document |
@@ -119,6 +157,18 @@ When: the last step around merge. Monorepo: reconciles the right workspace.
 
 **debug**: Runs a disciplined root cause loop and hands a regression test to `/test`.
 When: anytime something is failing, throwing, or behaving wrong. Not tied to project type.
+
+**review-loop**: Drives one feature through build, verify and review rounds by chaining `/develop`, `/check verify` and `/check review`, with round caps and a state file.
+When: a feature has an approved spec and must be right, instead of running those steps by hand. Needs a spec with `AC-N` criteria. Optional Stop hook makes "done" enforceable.
+
+**risk-rate**: Rates one change low, medium or high by what happens to a customer if it breaks.
+When: `/review-loop` runs it for you. Run it alone when you wonder how careful to be.
+
+**review-rules**: Creates `REVIEW.md` and grows it one approved rule at a time.
+When: `init` once per repo; `learn` after a review missed a bug or raised a false alarm.
+
+**fresh-eyes**: Sends a tester that has never seen the code through the live app and reports where it got stuck.
+When: after `/check verify` passes, on features a real customer will meet first.
 
 ## Learn more
 
