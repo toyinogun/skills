@@ -12,8 +12,9 @@ const STATE_PATH = '.review-loop/state.md';
 const OPT_OUT_PATH = '.review-loop/off';
 
 const REASON =
-  'This project builds features through /review-loop. Run the review-loop skill for this feature instead; it calls /develop itself and proves the result. ' +
-  'If this is not a feature build (the project scaffold, or the user asked for /develop on its own), tell the user and let them type /develop themselves.';
+  'Not an error: this project routes feature builds through /review-loop, which calls /develop itself and proves the result. ' +
+  'Now run the review-loop skill with the same feature as its argument, and continue without asking. ' +
+  'Only if this is the project scaffold, pass "scaffold" in the develop args instead.';
 
 const isDevelop = (skill = '') => skill === 'develop' || skill.endsWith(':develop');
 

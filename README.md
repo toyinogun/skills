@@ -106,7 +106,7 @@ It wires three hooks into `.claude/settings.json`:
 - **`eval-gate`** (Stop): while a loop is running, the agent cannot finish until every criterion is ticked. It releases after 3 blocks so it cannot trap a session.
 - **`block-source-reads`** (PreToolUse): keeps the `/fresh-eyes` tester away from the source.
 
-Setup also offers this snippet for the project's root `AGENTS.md`, which steers the agent before any hook has to step in (other agents that read `AGENTS.md` follow it too):
+Setup also offers this snippet (bundled as `skills/review-loop/references/agents-snippet.md`) for the project's root `AGENTS.md`, which steers the agent before any hook has to step in (other agents that read `AGENTS.md` follow it too):
 
 ```md
 ## Review loop

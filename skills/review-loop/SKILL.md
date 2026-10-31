@@ -96,10 +96,13 @@ If a finding class repeated across rounds, suggest `/review-rules learn <class>`
 Makes the loop automatic. Run it from the project root, then stop.
 
 1. Find where the skills are installed (`.claude/skills/`, else ask) and use that path below.
-2. Merge these hooks into `.claude/settings.json`. Keep every existing key and hook; add only what is missing:
+2. Merge these hooks into `.claude/settings.json`. Keep every existing key and hook; add only what is missing. Claude Code asks the engineer to approve any write to this file; say so before you write. If it is declined, print the merged file for them to paste:
 
 ```json
 {
+  "permissions": {
+    "allow": ["Skill(review-loop)", "Skill(develop)", "Skill(check)", "Skill(debug)", "Skill(risk-rate)", "Skill(review-rules)", "Skill(fresh-eyes)"]
+  },
   "hooks": {
     "PreToolUse": [
       { "matcher": "Skill", "hooks": [{ "type": "command", "command": "node .claude/skills/review-loop/scripts/route-to-loop.mjs" }] },
@@ -112,11 +115,12 @@ Makes the loop automatic. Run it from the project root, then stop.
 }
 ```
 
+   - The `Skill(...)` allows let the loop call each skill without a prompt every round. Merge them into any existing `allow` list.
    - `route-to-loop` denies `/develop` when the agent calls it outside a running loop and sends it to `/review-loop`. It allows the scaffold step.
    - `eval-gate` blocks stopping while criteria are open, and releases after 3 blocks.
    - `block-source-reads` only acts while `.fresh-eyes/active` exists.
 3. Add `.review-loop/` and `.fresh-eyes/` to `.gitignore`.
-4. Show the review loop snippet from this repo's README for root `AGENTS.md` and add it on a yes.
+4. Show `references/agents-snippet.md` and offer to append it to root `AGENTS.md` (create the file if there is none). Add it on a yes, unchanged.
 5. Tell the engineer: restart Claude Code to load the hooks; to switch routing off on one machine, create `.review-loop/off`; typing `/develop` yourself still works.
 
 Without setup, the loop still works when you run it by name.
@@ -127,4 +131,4 @@ Without setup, the loop still works when you run it by name.
 - Never edit the spec to make a criterion pass. A wrong criterion goes back to `/architect`.
 - Never rerun a round without recording it in the state first.
 
-Bundled files: `references/state-template.md`, `scripts/eval-gate.mjs`, `scripts/route-to-loop.mjs`.
+Bundled files: `references/state-template.md`, `references/agents-snippet.md`, `scripts/eval-gate.mjs`, `scripts/route-to-loop.mjs`.
