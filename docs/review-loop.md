@@ -17,14 +17,15 @@ Four skills that sit around the core workflow without changing any of it. They a
 
 ## Hooks (Claude Code, optional)
 
+- `skills/review-loop/scripts/route-to-loop.mjs` is a PreToolUse hook on `Skill`. It denies `/develop` outside a running loop and points the agent at `/review-loop`. Opt out per machine with `.review-loop/off`.
 - `skills/review-loop/scripts/eval-gate.mjs` is a Stop hook. It blocks stopping while `.review-loop/state.md` says `running` and criteria are unticked, and releases itself after 3 blocks.
 - `skills/fresh-eyes/scripts/block-source-reads.mjs` is a PreToolUse hook. It denies source reads while `.fresh-eyes/active` exists. Best effort, not a sandbox.
 
-Wiring snippets are in each skill. Tests: `npm run test:hooks`.
+`/review-loop setup` wires all three into `.claude/settings.json`. Tests: `npm run test:hooks`.
 
 ## Making sure it gets used
 
-Nothing forces a skill to run. It runs when you type it, or when the agent matches your request to its description. To make this the default, paste the snippet from the README section "Making sure the agent uses it" into the project's root `AGENTS.md`. The hooks enforce what a reminder cannot.
+Run `/review-loop setup` once per project in Claude Code. It installs the hooks above and offers the `AGENTS.md` snippet from the README. Other agents get the snippet only, since hooks are Claude Code specific.
 
 ## What it does not change
 

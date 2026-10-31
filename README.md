@@ -94,17 +94,29 @@ Running `/develop`, `/check verify` and `/check review` by hand works, but it re
 
 Where it fits the workflow depths: `Prototype` and `Alpha` rarely need it. At `Beta` and `GA`, use it in place of running the build and check steps by hand, and add `/fresh-eyes` at `GA`.
 
-**Making sure the agent uses it.** Skills run when you type them or when an agent matches your request to a skill description. Nothing forces them. To make them the default for a project, add this to its root `AGENTS.md` (or let `/audit` carry it):
+**Making it automatic.** On its own, a skill runs only when you type it or when the agent matches your request to its description. In Claude Code, run this once per project to force the loop:
+
+```
+/review-loop setup
+```
+
+It wires three hooks into `.claude/settings.json`:
+
+- **`route-to-loop`** (PreToolUse on `Skill`): when the agent reaches for `/develop` outside a running loop, the call is denied and the agent is sent to `/review-loop`, which calls `/develop` itself. The scaffold step and anything you type yourself still go through. Create `.review-loop/off` to switch it off on one machine.
+- **`eval-gate`** (Stop): while a loop is running, the agent cannot finish until every criterion is ticked. It releases after 3 blocks so it cannot trap a session.
+- **`block-source-reads`** (PreToolUse): keeps the `/fresh-eyes` tester away from the source.
+
+Setup also offers this snippet (bundled as `skills/review-loop/references/agents-snippet.md`) for the project's root `AGENTS.md`, which steers the agent before any hook has to step in (other agents that read `AGENTS.md` follow it too):
 
 ```md
 ## Review loop
 - Build any feature that has an approved spec in `docs/specs/` with `/review-loop <feature>`, not by running `/develop` and `/check` by hand.
 - Features that touch money, auth, personal data, migrations or permissions: run `/risk-rate` first and `/fresh-eyes` before merge.
 - When a review misses a bug or raises a false alarm, run `/review-rules learn <what happened>`.
-- Review rules for this repo live in `REVIEW.md`.
+- Every code review, including `/check review` and its reviewer, reads `REVIEW.md` first and applies its rules. Cite it when a finding comes from it.
 ```
 
-`AGENTS.md` loads every session, so the agent follows it without being reminded. The hooks then enforce the parts a reminder cannot: the Stop hook for "done", and the PreToolUse hook for `/fresh-eyes`. Details in [docs/review-loop.md](docs/review-loop.md).
+What the hooks cannot catch: an agent that edits code directly without calling any skill. The `AGENTS.md` rule covers that case, and `/check review` will still see the diff. Details in [docs/review-loop.md](docs/review-loop.md).
 
 ## What gets written, and where
 

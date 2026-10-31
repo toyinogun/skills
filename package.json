@@ -24,8 +24,9 @@
   },
   "scripts": {
     "check": "node scripts/check-portability.mjs",
-    "test": "npm run check",
+    "test": "npm run check && npm run check:wiring && npm run test:hooks",
     "tokens": "node scripts/analyze-token-usage.mjs",
-    "test:hooks": "node --test tests/*.test.mjs"
+    "test:hooks": "node --test tests/*.test.mjs",
+    "check:wiring": "node scripts/check-wiring.mjs"
   }
 }

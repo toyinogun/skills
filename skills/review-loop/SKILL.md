@@ -1,7 +1,7 @@
 ---
 name: review-loop
 allowed-tools: Bash, Read, Grep, Glob, Write, Edit, Skill
-argument-hint: <feature>
+argument-hint: <feature> | setup
 description: "Run `/review-loop` to drive one feature through build, verify and review rounds until every acceptance criterion is proven and the review finds nothing new, with round caps so it cannot spin. It chains /develop, /check verify and /check review. Run it after /architect, instead of calling them by hand."
 ---
 
@@ -30,6 +30,8 @@ Any Agent Skills client. Where a client cannot run another skill by name, tell t
 
 ## Execution
 
+If the argument is `setup`, skip to Setup at the end and do only that.
+
 ### Step 0: Preconditions (stop if one fails)
 
 - A spec with IDed acceptance criteria (`AC-1`, `AC-2`, ...) exists for the feature. None found: route to `/architect` and stop.
@@ -37,7 +39,7 @@ Any Agent Skills client. Where a client cannot run another skill by name, tell t
 
 ### Step 1: Start the state
 
-1. Create `.review-loop/state.md` from `references/state-template.md`: `status: running`, `round: 1`, `max_rounds: 3`, `criteria: .review-loop/criteria.md`.
+1. Create `.review-loop/state.md` from `references/state-template.md`: `status: running`, `round: 1`, `max_rounds: 3`, `evals: .review-loop/criteria.md`.
 2. Copy every `AC-N` line from the spec into `.review-loop/criteria.md` as `- [ ] AC-N <text>`. Do not touch the spec.
 3. Run `/risk-rate` and record `risk:` in the state. It decides how often review runs (Step 3).
 
@@ -89,13 +91,23 @@ How to revert: <flag, commit or migration step>
 
 If a finding class repeated across rounds, suggest `/review-rules learn <class>`. Do not mark the feature `done`; `/check verify` already offers that. On escalation, set `status: escalated`, list what is still open, and hand the decision to the engineer. If they abandon the loop, set `status: stopped`.
 
-## Make "done" enforceable (Claude Code, once per project)
+## Setup: `/review-loop setup` (Claude Code, once per project)
 
-Offer to add this Stop hook to `.claude/settings.json`. It blocks the agent from finishing while criteria are open and releases itself after 3 blocks:
+Makes the loop automatic. Run it from the project root, then stop.
+
+1. Find where the skills are installed (`.claude/skills/`, else ask) and use that path below.
+2. Merge these hooks into `.claude/settings.json`. Keep every existing key and hook; add only what is missing. Claude Code asks the engineer to approve any write to this file; say so before you write. If it is declined, print the merged file for them to paste:
 
 ```json
 {
+  "permissions": {
+    "allow": ["Skill(review-loop)", "Skill(develop)", "Skill(check)", "Skill(debug)", "Skill(risk-rate)", "Skill(review-rules)", "Skill(fresh-eyes)"]
+  },
   "hooks": {
+    "PreToolUse": [
+      { "matcher": "Skill", "hooks": [{ "type": "command", "command": "node .claude/skills/review-loop/scripts/route-to-loop.mjs" }] },
+      { "matcher": "Read|Grep|Glob|Bash", "hooks": [{ "type": "command", "command": "node .claude/skills/fresh-eyes/scripts/block-source-reads.mjs" }] }
+    ],
     "Stop": [
       { "hooks": [{ "type": "command", "command": "node .claude/skills/review-loop/scripts/eval-gate.mjs" }] }
     ]
@@ -103,7 +115,15 @@ Offer to add this Stop hook to `.claude/settings.json`. It blocks the agent from
 }
 ```
 
-Adjust the path if the skills live elsewhere.
+   - The `Skill(...)` allows let the loop call each skill without a prompt every round. Merge them into any existing `allow` list.
+   - `route-to-loop` denies `/develop` when the agent calls it outside a running loop and sends it to `/review-loop`. It allows the scaffold step.
+   - `eval-gate` blocks stopping while criteria are open, and releases after 3 blocks.
+   - `block-source-reads` only acts while `.fresh-eyes/active` exists.
+3. Add `.review-loop/` and `.fresh-eyes/` to `.gitignore`.
+4. Show `references/agents-snippet.md` and offer to append it to root `AGENTS.md` (create the file if there is none). Add it on a yes, unchanged.
+5. Tell the engineer: restart Claude Code to load the hooks; to switch routing off on one machine, create `.review-loop/off`; typing `/develop` yourself still works.
+
+Without setup, the loop still works when you run it by name.
 
 ## Rules
 
@@ -111,4 +131,4 @@ Adjust the path if the skills live elsewhere.
 - Never edit the spec to make a criterion pass. A wrong criterion goes back to `/architect`.
 - Never rerun a round without recording it in the state first.
 
-Bundled files: `references/state-template.md`, `scripts/eval-gate.mjs`.
+Bundled files: `references/state-template.md`, `references/agents-snippet.md`, `scripts/eval-gate.mjs`, `scripts/route-to-loop.mjs`.
