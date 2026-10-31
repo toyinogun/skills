@@ -26,6 +26,10 @@ Run `/debug` anytime something breaks. Run a bare `/scope` anytime to see where 
 | `sync` | Keeps AGENTS.md, the scope, and spec statuses current after a change. |
 | `debug` | Finds and fixes the root cause of a bug, then hands a regression test to `/test`. |
 | `scroll-craft` | Builds a premium scroll driven landing page (by [Nate Herk](https://github.com/nateherkai/scroll-craft), MIT, vendored). `/develop` hands a scroll experience page to it and mounts the result; it can also run on its own. Needs Node 18, a full ffmpeg, and `playwright-core` (see its `SKILL.md`). |
+| `review-loop` | Drives one feature through build, verify and review rounds by chaining `/develop`, `/check verify` and `/check review`, with round caps, a state file, and an optional Stop hook so "done" means every acceptance criterion is proven. |
+| `risk-rate` | Rates one change low, medium or high by what happens to a customer if it breaks, and sets how often `/review-loop` reviews it. |
+| `review-rules` | Creates `REVIEW.md` (what failure looks like here, what to ignore, the evidence rule) and grows it one approved rule at a time. |
+| `fresh-eyes` | Sends a tester that has never seen the code to use the live app like a first time customer, after `/check verify` passes. |
 
 Hardening (systems level failure mode analysis) is temporarily removed and will return as a system design specialization.
 
